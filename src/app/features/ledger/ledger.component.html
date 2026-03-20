@@ -1,0 +1,53 @@
+<div class="space-y-6">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Ledger</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Income & expense tracker</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Add Transaction
+    </button>
+  </div>
+
+  @if (transactionsQuery.isPending()) {
+    <div class="flex justify-center py-20">
+      <mat-spinner diameter="48" />
+    </div>
+  } @else if (transactionsQuery.isError()) {
+    <div class="flex flex-col items-center justify-center py-20 gap-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800">
+      <div class="w-14 h-14 rounded-full bg-red-50 dark:bg-red-950 flex items-center justify-center">
+        <mat-icon class="text-red-500 text-3xl">cloud_off</mat-icon>
+      </div>
+      <div class="text-center">
+        <p class="font-medium text-gray-900 dark:text-white">Failed to load transactions</p>
+        <p class="text-sm text-gray-400 mt-1">Is json-server running on port 3001?</p>
+      </div>
+      <button mat-stroked-button color="primary" (click)="transactionsQuery.refetch()">
+        <mat-icon>refresh</mat-icon> Retry
+      </button>
+    </div>
+  } @else {
+
+    <!-- KPI summary -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <app-stat-card label="Total Income"  [value]="fmt(totalIncome())"   icon="trending_up"    iconBgClass="bg-emerald-500" />
+      <app-stat-card label="Total Expenses" [value]="fmt(totalExpenses())" icon="trending_down"  iconBgClass="bg-rose-500" />
+      <app-stat-card label="Net Balance"   [value]="fmt(netBalance())"    icon="account_balance" [iconBgClass]="netBalance() >= 0 ? 'bg-blue-600' : 'bg-amber-500'" />
+    </div>
+
+    <!-- Filters -->
+    <app-transaction-filters (filtersChanged)="onFiltersChanged($event)" />
+
+    <!-- Table -->
+    <app-transaction-table
+      [transactions]="filteredTransactions()"
+      (deleteTransaction)="onDelete($event)"
+    />
+
+    <!-- Charts -->
+    <app-ledger-charts [transactions]="allTransactions()" />
+  }
+</div>

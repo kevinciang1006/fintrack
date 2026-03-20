@@ -1,0 +1,44 @@
+<div class="space-y-6">
+
+  <!-- Header -->
+  <div>
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Loan Calculator</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Mortgage · Personal · Auto</p>
+  </div>
+
+  <!-- Loan type tabs -->
+  <div class="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 w-fit">
+    @for (tab of tabs; track tab.key) {
+      <button
+        type="button"
+        class="px-5 py-2 rounded-lg text-sm font-medium transition-all duration-150"
+        [class]="activeTab() === tab.key
+          ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+          : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'"
+        (click)="activeTab.set(tab.key)"
+      >
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <!-- Form card -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
+    <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-5">Loan Parameters</h3>
+    <app-loan-form (calculationResult)="onResult($event)" />
+  </div>
+
+  <!-- Results -->
+  @if (result(); as r) {
+
+    <!-- Summary KPIs -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <app-stat-card label="Monthly Payment" [value]="fmt(r.monthlyPayment)" icon="payments"            iconBgClass="bg-blue-600" />
+      <app-stat-card label="Total Payment"   [value]="fmt(r.totalPayment)"   icon="account_balance_wallet" iconBgClass="bg-indigo-600" />
+      <app-stat-card label="Total Interest"  [value]="fmt(r.totalInterest)"  icon="percent"             iconBgClass="bg-rose-500" />
+    </div>
+
+    <app-loan-charts [result]="r" />
+    <app-amortization-table [schedule]="r.amortizationSchedule" />
+  }
+</div>

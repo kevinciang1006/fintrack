@@ -1,0 +1,28 @@
+@if (isPending()) {
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+    <app-loading-skeleton [count]="6" height="h-28" />
+  </div>
+} @else if (isError()) {
+  <div class="flex flex-col items-center justify-center py-20 gap-4 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800">
+    <div class="w-14 h-14 rounded-full bg-red-50 dark:bg-red-950 flex items-center justify-center">
+      <mat-icon class="text-red-500 text-3xl">wifi_off</mat-icon>
+    </div>
+    <div class="text-center">
+      <p class="font-medium text-gray-900 dark:text-white">Failed to load market data</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Check your connection or try again</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="retry.emit()">
+      <mat-icon>refresh</mat-icon> Retry
+    </button>
+  </div>
+} @else {
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+    @for (coin of coins(); track coin.id) {
+      <app-coin-card
+        [coin]="coin"
+        [isSelected]="selectedCoinId() === coin.id"
+        (coinSelected)="coinSelected.emit($event)"
+      />
+    }
+  </div>
+}

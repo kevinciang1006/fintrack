@@ -1,0 +1,172 @@
+<!-- Page header -->
+<div class="mb-6">
+  <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Settings</h1>
+  <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Manage your preferences and data.</p>
+</div>
+
+<div class="max-w-2xl flex flex-col gap-6">
+
+  <!-- ─── Appearance ────────────────────────────────────────────── -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+    <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center">
+        <mat-icon class="text-white" style="font-size:18px;width:18px;height:18px;">palette</mat-icon>
+      </div>
+      <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Appearance</h2>
+    </div>
+
+    <div class="px-5 py-4 flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-900 dark:text-white">Dark Mode</p>
+          <p class="text-xs text-gray-400 dark:text-gray-500">Switch between light and dark theme</p>
+        </div>
+        <mat-slide-toggle
+          [checked]="themeService.isDark()"
+          (change)="themeService.toggle()"
+          color="primary"
+        />
+      </div>
+
+      <mat-divider />
+
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-900 dark:text-white">Collapsed Sidebar</p>
+          <p class="text-xs text-gray-400 dark:text-gray-500">Keep the sidebar collapsed by default</p>
+        </div>
+        <mat-slide-toggle
+          [checked]="layoutService.isSidebarCollapsed()"
+          (change)="layoutService.toggleSidebar()"
+          color="primary"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Display Preferences ──────────────────────────────────── -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+    <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+        <mat-icon class="text-white" style="font-size:18px;width:18px;height:18px;">tune</mat-icon>
+      </div>
+      <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Display Preferences</h2>
+    </div>
+
+    <div class="px-5 py-4 flex flex-col gap-4">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <p class="text-sm font-medium text-gray-900 dark:text-white">Currency</p>
+          <p class="text-xs text-gray-400 dark:text-gray-500">Preferred display currency</p>
+        </div>
+        <mat-select
+          [value]="currency()"
+          (valueChange)="onCurrencyChange($event)"
+          class="w-32"
+        >
+          @for (c of currencies; track c) {
+            <mat-option [value]="c">{{ c }}</mat-option>
+          }
+        </mat-select>
+      </div>
+
+      <mat-divider />
+
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <p class="text-sm font-medium text-gray-900 dark:text-white">Date Format</p>
+          <p class="text-xs text-gray-400 dark:text-gray-500">How dates are displayed</p>
+        </div>
+        <mat-select
+          [value]="dateFormat()"
+          (valueChange)="onDateFormatChange($event)"
+          class="w-40"
+        >
+          @for (f of dateFormats; track f) {
+            <mat-option [value]="f">{{ f }}</mat-option>
+          }
+        </mat-select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Data Management ──────────────────────────────────────── -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+    <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+        <mat-icon class="text-white" style="font-size:18px;width:18px;height:18px;">storage</mat-icon>
+      </div>
+      <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Data Management</h2>
+    </div>
+
+    <div class="px-5 py-4 flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-900 dark:text-white">Export Transactions</p>
+          <p class="text-xs text-gray-400 dark:text-gray-500">Download all transactions as JSON</p>
+        </div>
+        @if (isExporting()) {
+          <button mat-stroked-button color="primary" disabled>
+            <mat-spinner diameter="16" />
+            Exporting…
+          </button>
+        } @else {
+          <button mat-stroked-button color="primary" (click)="exportTransactions()">
+            <mat-icon>download</mat-icon>
+            Export
+          </button>
+        }
+      </div>
+
+      <mat-divider />
+
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-900 dark:text-white">Clear All Transactions</p>
+          <p class="text-xs text-red-400">Permanently delete all ledger data</p>
+        </div>
+        @if (isClearing()) {
+          <button mat-flat-button color="warn" disabled>
+            <mat-spinner diameter="16" />
+            Clearing…
+          </button>
+        } @else {
+          <button mat-flat-button color="warn" (click)="clearAllTransactions()">
+            <mat-icon>delete_forever</mat-icon>
+            Clear All
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── About ─────────────────────────────────────────────────── -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+    <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
+        <mat-icon class="text-white" style="font-size:18px;width:18px;height:18px;">info</mat-icon>
+      </div>
+      <h2 class="text-sm font-semibold text-gray-900 dark:text-white">About</h2>
+    </div>
+
+    <div class="px-5 py-4 flex flex-col gap-2">
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-500 dark:text-gray-400">App</span>
+        <span class="font-medium text-gray-900 dark:text-white">FinTrack</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-500 dark:text-gray-400">Version</span>
+        <span class="font-medium text-gray-900 dark:text-white">1.0.0</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-500 dark:text-gray-400">Framework</span>
+        <span class="font-medium text-gray-900 dark:text-white">Angular 21</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-500 dark:text-gray-400">Data source</span>
+        <span class="font-medium text-gray-900 dark:text-white">json-server (localhost:3001)</span>
+      </div>
+    </div>
+  </div>
+
+</div>

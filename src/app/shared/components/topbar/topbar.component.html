@@ -1,0 +1,86 @@
+<header class="flex items-center justify-between px-4 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shrink-0">
+
+  <!-- Mobile: brand logo + name -->
+  <div class="flex items-center gap-2 md:hidden">
+    <div class="w-7 h-7 rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+      <mat-icon class="text-white text-sm">account_balance</mat-icon>
+    </div>
+    <span class="font-bold text-gray-900 dark:text-white">FinTrack</span>
+  </div>
+
+  <!-- Desktop: sidebar toggle button -->
+  <button
+    mat-icon-button
+    class="hidden md:flex text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+    (click)="layoutService.toggleSidebar()"
+    [matTooltip]="layoutService.isSidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+    matTooltipPosition="below"
+  >
+    <mat-icon>{{ layoutService.isSidebarCollapsed() ? 'menu' : 'menu_open' }}</mat-icon>
+  </button>
+
+  <!-- Right-side actions -->
+  <div class="flex items-center gap-1">
+
+    <!-- Dark mode toggle -->
+    <button
+      mat-icon-button
+      (click)="themeService.toggle()"
+      class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+      [attr.aria-label]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+    >
+      <mat-icon>{{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    </button>
+
+    <!-- Avatar button -->
+    <button
+      [matMenuTriggerFor]="profileMenu"
+      class="w-9 h-9 rounded-full overflow-hidden ring-2 ring-transparent hover:ring-blue-400 dark:hover:ring-blue-500 transition-all cursor-pointer border-0 bg-transparent p-0"
+      aria-label="Open profile menu"
+    >
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold select-none">
+        KP
+      </div>
+    </button>
+
+  </div>
+</header>
+
+<!-- Profile dropdown menu -->
+<mat-menu #profileMenu="matMenu" xPosition="before">
+
+  <!-- User info header (non-interactive) -->
+  <div class="px-4 pt-3 pb-2 pointer-events-none" (click)="$event.stopPropagation()">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
+        KP
+      </div>
+      <div class="min-w-0">
+        <p class="text-sm font-semibold text-gray-900 dark:text-white leading-tight">Kevin P.</p>
+        <p class="text-xs text-gray-400 dark:text-gray-500 leading-tight mt-0.5">Personal Account</p>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider />
+
+  <!-- Settings -->
+  <button mat-menu-item (click)="goToSettings()">
+    <mat-icon>settings</mat-icon>
+    <span>Settings</span>
+  </button>
+
+  <!-- Theme toggle -->
+  <button mat-menu-item (click)="themeService.toggle()">
+    <mat-icon>{{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    <span>{{ themeService.isDark() ? 'Light mode' : 'Dark mode' }}</span>
+  </button>
+
+  <mat-divider />
+
+  <!-- Version info (non-interactive) -->
+  <div class="px-4 py-2 pointer-events-none">
+    <p class="text-xs text-gray-400 dark:text-gray-600">FinTrack v1.0 · Angular 21</p>
+  </div>
+
+</mat-menu>

@@ -1,0 +1,66 @@
+<div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden shadow-sm">
+  <div class="overflow-x-auto">
+    <table mat-table [dataSource]="dataSource" matSort (matSortChange)="onSort($event)" class="w-full">
+
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide bg-gray-50 dark:bg-gray-800/50">Date</th>
+        <td mat-cell *matCellDef="let r" class="text-sm text-gray-600 dark:text-gray-400 tabular-nums">{{ r.date | date:'MMM d, y' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide bg-gray-50 dark:bg-gray-800/50">Description</th>
+        <td mat-cell *matCellDef="let r" class="text-sm font-medium text-gray-900 dark:text-white max-w-[200px] truncate">{{ r.description }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide bg-gray-50 dark:bg-gray-800/50">Category</th>
+        <td mat-cell *matCellDef="let r">
+          <span class="inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full" [class]="categoryClass(r.category)">
+            {{ r.category }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide bg-gray-50 dark:bg-gray-800/50">Amount</th>
+        <td mat-cell *matCellDef="let r"
+          class="text-sm font-bold tabular-nums"
+          [class]="r.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'">
+          {{ r.type === 'income' ? '+' : '-' }}{{ r.amount | currency:'USD':'symbol':'1.2-2' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide bg-gray-50 dark:bg-gray-800/50">Type</th>
+        <td mat-cell *matCellDef="let r">
+          <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize"
+            [class]="r.type === 'income'
+              ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
+              : 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300'">
+            <span class="w-1.5 h-1.5 rounded-full inline-block" [class]="r.type === 'income' ? 'bg-emerald-500' : 'bg-red-500'"></span>
+            {{ r.type }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="bg-gray-50 dark:bg-gray-800/50"></th>
+        <td mat-cell *matCellDef="let r">
+          <button mat-icon-button color="warn" (click)="deleteTransaction.emit(r.id)" aria-label="Delete" class="opacity-40 hover:opacity-100 transition-opacity">
+            <mat-icon class="text-base">delete_outline</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let r; columns: displayedColumns;" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border-b border-gray-50 dark:border-gray-800"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td [colSpan]="displayedColumns.length" class="text-center py-16 text-gray-400 dark:text-gray-500 text-sm">
+          No transactions match your filters.
+        </td>
+      </tr>
+    </table>
+  </div>
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons class="border-t border-gray-100 dark:border-gray-800" />
+</div>

@@ -1,0 +1,33 @@
+<div
+  class="bg-white dark:bg-gray-900 rounded-2xl border p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+  [class]="isSelected() ? 'border-blue-500 shadow-md shadow-blue-500/10 ring-2 ring-blue-500/20' : 'border-gray-100 dark:border-gray-800'"
+  (click)="coinSelected.emit(coin())"
+>
+  <!-- Header row -->
+  <div class="flex items-center gap-3 mb-3">
+    <img [src]="coin().image" [alt]="coin().name" class="w-10 h-10 rounded-full object-cover shrink-0" loading="lazy" />
+    <div class="flex-1 min-w-0">
+      <p class="font-semibold text-gray-900 dark:text-white text-sm truncate">{{ coin().name }}</p>
+      <p class="text-xs text-gray-400 dark:text-gray-500 uppercase font-medium">{{ coin().symbol }}</p>
+    </div>
+    <span
+      class="inline-flex items-center gap-0.5 text-xs font-semibold px-2.5 py-1 rounded-full shrink-0"
+      [class]="coin().price_change_percentage_24h >= 0
+        ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400'
+        : 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400'"
+    >
+      <mat-icon class="text-sm leading-none">{{ coin().price_change_percentage_24h >= 0 ? 'arrow_drop_up' : 'arrow_drop_down' }}</mat-icon>
+      {{ (coin().price_change_percentage_24h | number:'1.2-2') }}%
+    </span>
+  </div>
+
+  <!-- Price row -->
+  <div class="flex items-end justify-between">
+    <p class="text-xl font-bold text-gray-900 dark:text-white tabular-nums">
+      {{ coin().current_price | currency:'USD':'symbol':'1.2-2' }}
+    </p>
+    <p class="text-xs text-gray-400 dark:text-gray-500 tabular-nums">
+      MCap {{ coin().market_cap | currency:'USD':'symbol':'1.0-0' }}
+    </p>
+  </div>
+</div>

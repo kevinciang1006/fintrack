@@ -1,0 +1,59 @@
+<aside class="flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 h-full overflow-hidden w-full">
+
+  <!-- Brand row (aligned with topbar height) -->
+  <div
+    class="flex items-center h-16 border-b border-gray-100 dark:border-gray-800 shrink-0 px-5"
+    [class.justify-start]="!layoutService.isSidebarCollapsed()"
+    [class.justify-center]="layoutService.isSidebarCollapsed()"
+  >
+    <div class="w-8 h-8 shrink-0 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm">
+      <mat-icon class="text-white" style="font-size:18px;width:18px;height:18px;">account_balance</mat-icon>
+    </div>
+    @if (!layoutService.isSidebarCollapsed()) {
+      <span class="ml-2 text-base font-bold text-gray-900 dark:text-white tracking-tight truncate">FinTrack</span>
+    }
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex flex-col gap-1 p-2 flex-1 min-h-0 overflow-hidden">
+    @for (item of topNavItems; track item.route) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-all duration-150 text-sm"
+        [class.justify-center]="layoutService.isSidebarCollapsed()"
+        [class.px-0]="layoutService.isSidebarCollapsed()"
+        [matTooltip]="layoutService.isSidebarCollapsed() ? item.label : ''"
+        matTooltipPosition="right"
+      >
+        <mat-icon class="text-xl shrink-0">{{ item.icon }}</mat-icon>
+        @if (!layoutService.isSidebarCollapsed()) { <span>{{ item.label }}</span> }
+      </a>
+    }
+
+    <!-- Spacer pushes Settings to bottom -->
+    <div class="flex-1"></div>
+
+    @for (item of bottomNavItems; track item.route) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-all duration-150 text-sm"
+        [class.justify-center]="layoutService.isSidebarCollapsed()"
+        [class.px-0]="layoutService.isSidebarCollapsed()"
+        [matTooltip]="layoutService.isSidebarCollapsed() ? item.label : ''"
+        matTooltipPosition="right"
+      >
+        <mat-icon class="text-xl shrink-0">{{ item.icon }}</mat-icon>
+        @if (!layoutService.isSidebarCollapsed()) { <span>{{ item.label }}</span> }
+      </a>
+    }
+  </nav>
+
+  <!-- Footer -->
+  @if (!layoutService.isSidebarCollapsed()) {
+    <div class="px-4 py-4 border-t border-gray-100 dark:border-gray-800 shrink-0">
+      <p class="text-xs text-gray-400 dark:text-gray-600 text-center">FinTrack v1.0</p>
+    </div>
+  }
+</aside>

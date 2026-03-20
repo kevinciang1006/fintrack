@@ -1,0 +1,23 @@
+<div class="p-1">
+  <div mat-dialog-title class="flex items-center gap-3">
+    <div class="w-9 h-9 rounded-full bg-red-100 dark:bg-red-950 flex items-center justify-center shrink-0">
+      <mat-icon class="text-red-600 dark:text-red-400">warning</mat-icon>
+    </div>
+    <span class="text-base font-semibold text-gray-900 dark:text-white">Clear All Transactions?</span>
+  </div>
+
+  <mat-dialog-content class="mt-2">
+    <p class="text-sm text-gray-600 dark:text-gray-300">
+      This will permanently delete <strong>all transactions</strong> from the ledger.
+      This action cannot be undone.
+    </p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="gap-2 mt-4">
+    <button mat-stroked-button (click)="cancel()">Cancel</button>
+    <button mat-flat-button color="warn" (click)="confirm()">
+      <mat-icon>delete_forever</mat-icon>
+      Delete All
+    </button>
+  </mat-dialog-actions>
+</div>

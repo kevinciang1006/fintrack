@@ -1,0 +1,205 @@
+<!-- Page header -->
+<div class="mb-6">
+  <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+  <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Welcome back — here's your financial snapshot.</p>
+</div>
+
+<!-- ─── Stat Cards ─────────────────────────────────────────────── -->
+@if (transactionsQuery.isPending()) {
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <app-loading-skeleton [count]="4" height="h-28" />
+  </div>
+} @else {
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <app-stat-card
+      label="Net Worth"
+      [value]="(netWorth() | currency) ?? '—'"
+      icon="account_balance_wallet"
+      iconBgClass="bg-gradient-to-br from-blue-500 to-indigo-600"
+      [trend]="netWorth() >= 0 ? 'up' : 'down'"
+    />
+    <app-stat-card
+      label="Monthly Income"
+      [value]="(monthlyIncome() | currency) ?? '—'"
+      icon="arrow_downward"
+      iconBgClass="bg-gradient-to-br from-emerald-500 to-teal-600"
+      trend="up"
+    />
+    <app-stat-card
+      label="Monthly Expenses"
+      [value]="(monthlyExpenses() | currency) ?? '—'"
+      icon="arrow_upward"
+      iconBgClass="bg-gradient-to-br from-red-500 to-rose-600"
+      trend="down"
+    />
+    <app-stat-card
+      label="Savings Rate"
+      [value]="savingsRate()"
+      icon="savings"
+      iconBgClass="bg-gradient-to-br from-amber-500 to-orange-500"
+      trend="neutral"
+    />
+  </div>
+}
+
+<!-- ─── Market Strip ───────────────────────────────────────────── -->
+<div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 mb-6 shadow-sm">
+  <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+        <mat-icon class="text-white" style="font-size:16px;width:16px;height:16px;">trending_up</mat-icon>
+      </div>
+      <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Live Markets</h2>
+    </div>
+    <button mat-button (click)="goToMarkets()" class="text-xs text-blue-600 dark:text-blue-400">
+      View all <mat-icon class="text-sm align-middle">chevron_right</mat-icon>
+    </button>
+  </div>
+
+  @if (coinsQuery.isPending()) {
+    <div class="flex gap-3 overflow-x-auto pb-1">
+      @for (i of [1,2,3,4,5,6]; track i) {
+        <div class="flex-shrink-0 w-36 h-16 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse"></div>
+      }
+    </div>
+  } @else if (coinsQuery.isError()) {
+    <p class="text-sm text-gray-400 py-2">Market data unavailable</p>
+  } @else {
+    <div class="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
+      @for (coin of coinsQuery.data(); track coin.id) {
+        <button
+          (click)="goToMarkets()"
+          class="flex-shrink-0 flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer min-w-[140px]"
+        >
+          <img [src]="coin.image" [alt]="coin.name" class="w-7 h-7 rounded-full" />
+          <div class="text-left min-w-0">
+            <p class="text-xs font-semibold text-gray-900 dark:text-white uppercase">{{ coin.symbol }}</p>
+            <p class="text-xs text-gray-600 dark:text-gray-300">${{ coin.current_price | number:'1.0-2' }}</p>
+            <p class="text-xs font-medium" [class]="priceChangeClass(coin.price_change_percentage_24h)">
+              {{ coin.price_change_percentage_24h >= 0 ? '+' : '' }}{{ coin.price_change_percentage_24h | number:'1.1-2' }}%
+            </p>
+          </div>
+        </button>
+      }
+    </div>
+  }
+</div>
+
+<!-- ─── Bottom Grid: Spending Chart + Recent Transactions ────── -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+
+  <!-- Spending Doughnut -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 shadow-sm">
+    <div class="flex items-center gap-2 mb-4">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center">
+        <mat-icon class="text-white" style="font-size:16px;width:16px;height:16px;">donut_large</mat-icon>
+      </div>
+      <div>
+        <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Spending by Category</h2>
+        <p class="text-xs text-gray-400 dark:text-gray-500">Current month</p>
+      </div>
+    </div>
+
+    @if (transactionsQuery.isPending()) {
+      <div class="h-64 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse"></div>
+    } @else if (spendingByCategory().length === 0) {
+      <div class="flex flex-col items-center justify-center h-64 text-gray-400 gap-2">
+        <mat-icon class="text-4xl">pie_chart_outline</mat-icon>
+        <p class="text-sm">No expenses this month</p>
+      </div>
+    } @else {
+      <div class="h-64 relative">
+        <canvas baseChart
+          [data]="doughnutData()"
+          [options]="doughnutOptions"
+          type="doughnut">
+        </canvas>
+      </div>
+    }
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 shadow-sm flex flex-col">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center">
+          <mat-icon class="text-white" style="font-size:16px;width:16px;height:16px;">receipt_long</mat-icon>
+        </div>
+        <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Recent Transactions</h2>
+      </div>
+      <button mat-button (click)="goToLedger()" class="text-xs text-blue-600 dark:text-blue-400">
+        View all <mat-icon class="text-sm align-middle">chevron_right</mat-icon>
+      </button>
+    </div>
+
+    @if (transactionsQuery.isPending()) {
+      <app-loading-skeleton [count]="5" height="h-10" />
+    } @else if (recentTransactions().length === 0) {
+      <div class="flex flex-col items-center justify-center flex-1 text-gray-400 gap-2 py-8">
+        <mat-icon class="text-4xl">receipt</mat-icon>
+        <p class="text-sm">No transactions yet</p>
+      </div>
+    } @else {
+      <div class="flex flex-col gap-2 flex-1">
+        @for (txn of recentTransactions(); track txn.id) {
+          <div class="flex items-center gap-3 py-2 border-b border-gray-50 dark:border-gray-800 last:border-0">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                 [class]="txn.type === 'income' ? 'bg-emerald-100 dark:bg-emerald-950' : 'bg-red-100 dark:bg-red-950'">
+              <mat-icon class="text-sm"
+                        [class]="txn.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'"
+                        style="font-size:16px;width:16px;height:16px;">
+                {{ txn.type === 'income' ? 'arrow_downward' : 'arrow_upward' }}
+              </mat-icon>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ txn.description }}</p>
+              <p class="text-xs text-gray-400">{{ txn.date }} · <span class="inline-block px-1.5 py-0.5 rounded text-xs font-medium" [class]="categoryClass(txn.category)">{{ txn.category }}</span></p>
+            </div>
+            <span class="text-sm font-semibold shrink-0"
+                  [class]="txn.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'">
+              {{ txn.type === 'income' ? '+' : '-' }}{{ txn.amount | currency }}
+            </span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<!-- ─── Loan Snapshot ─────────────────────────────────────────── -->
+<div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 shadow-sm">
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center">
+        <mat-icon class="text-white" style="font-size:16px;width:16px;height:16px;">home</mat-icon>
+      </div>
+      <div>
+        <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Loan Snapshot</h2>
+        <p class="text-xs text-gray-400 dark:text-gray-500">$300k at 6.5% · 30 years</p>
+      </div>
+    </div>
+    <button mat-stroked-button color="primary" (click)="goToCalculator()" class="text-xs">
+      Try Calculator
+      <mat-icon>arrow_forward</mat-icon>
+    </button>
+  </div>
+
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 text-center">
+      <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Monthly Payment</p>
+      <p class="text-base font-bold text-gray-900 dark:text-white">{{ loanSnapshot.monthlyPayment | currency }}</p>
+    </div>
+    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 text-center">
+      <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Principal</p>
+      <p class="text-base font-bold text-gray-900 dark:text-white">{{ loanSnapshot.principal | currency:'USD':'symbol':'1.0-0' }}</p>
+    </div>
+    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 text-center">
+      <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Total Interest</p>
+      <p class="text-base font-bold text-red-500 dark:text-red-400">{{ loanSnapshot.totalInterest | currency:'USD':'symbol':'1.0-0' }}</p>
+    </div>
+    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 text-center">
+      <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Total Cost</p>
+      <p class="text-base font-bold text-gray-900 dark:text-white">{{ loanSnapshot.totalPayment | currency:'USD':'symbol':'1.0-0' }}</p>
+    </div>
+  </div>
+</div>

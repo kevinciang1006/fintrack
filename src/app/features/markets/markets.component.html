@@ -1,0 +1,38 @@
+<div class="space-y-6">
+
+  <!-- Page header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Markets</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Live crypto prices · Refreshes every 60 s</p>
+    </div>
+    <div class="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+      Live
+    </div>
+  </div>
+
+  <!-- Watchlist grid -->
+  <app-watchlist
+    [coins]="watchlistQuery.data() ?? []"
+    [isPending]="watchlistQuery.isPending()"
+    [isError]="watchlistQuery.isError()"
+    [selectedCoinId]="selectedCoin()?.id ?? null"
+    (coinSelected)="onCoinSelected($event)"
+    (retry)="watchlistQuery.refetch()"
+  />
+
+  <!-- Chart panel -->
+  @if (selectedCoin(); as coin) {
+    <div class="mt-2">
+      <div class="flex items-center gap-2 mb-3">
+        <button mat-icon-button (click)="selectedCoin.set(null)" aria-label="Close chart" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+          <mat-icon>close</mat-icon>
+        </button>
+        <img [src]="coin.image" [alt]="coin.name" class="w-5 h-5 rounded-full" />
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ coin.name }} Chart</span>
+      </div>
+      <app-coin-chart [coinId]="coin.id" [coinName]="coin.name" />
+    </div>
+  }
+</div>

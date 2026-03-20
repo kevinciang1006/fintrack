@@ -1,0 +1,39 @@
+<form [formGroup]="form" class="flex flex-wrap gap-3 items-end bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 shadow-sm">
+  <mat-form-field appearance="outline" class="min-w-[130px]">
+    <mat-label>Category</mat-label>
+    <mat-select formControlName="category" (selectionChange)="emitFilters()">
+      <mat-option value="">All categories</mat-option>
+      @for (cat of categories; track cat) {
+        <mat-option [value]="cat">{{ cat }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="min-w-[110px]">
+    <mat-label>Type</mat-label>
+    <mat-select formControlName="type" (selectionChange)="emitFilters()">
+      <mat-option value="">All types</mat-option>
+      <mat-option value="income">Income</mat-option>
+      <mat-option value="expense">Expense</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="min-w-[140px]">
+    <mat-label>From</mat-label>
+    <input matInput [matDatepicker]="fromPicker" formControlName="dateFrom" (dateChange)="emitFilters()" />
+    <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
+    <mat-datepicker #fromPicker />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="min-w-[140px]">
+    <mat-label>To</mat-label>
+    <input matInput [matDatepicker]="toPicker" formControlName="dateTo" (dateChange)="emitFilters()" />
+    <mat-datepicker-toggle matIconSuffix [for]="toPicker" />
+    <mat-datepicker #toPicker />
+  </mat-form-field>
+
+  <button mat-stroked-button type="button" (click)="clearFilters()" class="mb-[1.35em] shrink-0">
+    <mat-icon>filter_alt_off</mat-icon>
+    Clear
+  </button>
+</form>

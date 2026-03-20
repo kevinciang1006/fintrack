@@ -1,0 +1,40 @@
+<div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden shadow-sm">
+  <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+    <mat-icon class="text-gray-400">table_rows</mat-icon>
+    <h3 class="text-base font-semibold text-gray-900 dark:text-white">Amortization Schedule</h3>
+    <span class="ml-auto text-xs text-gray-400 dark:text-gray-500">{{ schedule().length }} payments</span>
+  </div>
+  <div class="overflow-x-auto">
+    <table mat-table [dataSource]="dataSource" class="w-full text-sm">
+
+      <ng-container matColumnDef="month">
+        <th mat-header-cell *matHeaderCellDef class="text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50">#</th>
+        <td mat-cell *matCellDef="let r" class="text-gray-600 dark:text-gray-400 font-medium tabular-nums">{{ r.month }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="payment">
+        <th mat-header-cell *matHeaderCellDef class="text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50">Payment</th>
+        <td mat-cell *matCellDef="let r" class="text-gray-900 dark:text-white tabular-nums">{{ r.payment | currency:'USD':'symbol':'1.2-2' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="principal">
+        <th mat-header-cell *matHeaderCellDef class="text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50">Principal</th>
+        <td mat-cell *matCellDef="let r" class="text-emerald-600 dark:text-emerald-400 font-medium tabular-nums">{{ r.principal | currency:'USD':'symbol':'1.2-2' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="interest">
+        <th mat-header-cell *matHeaderCellDef class="text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50">Interest</th>
+        <td mat-cell *matCellDef="let r" class="text-red-500 dark:text-red-400 tabular-nums">{{ r.interest | currency:'USD':'symbol':'1.2-2' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="balance">
+        <th mat-header-cell *matHeaderCellDef class="text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50">Balance</th>
+        <td mat-cell *matCellDef="let r" class="text-gray-900 dark:text-white font-semibold tabular-nums">{{ r.balance | currency:'USD':'symbol':'1.2-2' }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let r; columns: columns;" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"></tr>
+    </table>
+  </div>
+  <mat-paginator [pageSize]="12" [pageSizeOptions]="[12, 24, 60]" showFirstLastButtons class="border-t border-gray-100 dark:border-gray-800" />
+</div>
