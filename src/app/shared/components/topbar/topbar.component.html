@@ -1,23 +1,30 @@
 <header class="flex items-center justify-between px-4 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shrink-0">
 
-  <!-- Mobile: brand logo + name -->
-  <div class="flex items-center gap-2 md:hidden">
-    <div class="w-7 h-7 rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-      <mat-icon class="text-white text-sm">account_balance</mat-icon>
-    </div>
+  <!-- Mobile: hamburger to open sidebar overlay + brand name -->
+  <div class="flex items-center gap-1 md:hidden">
+    <button
+      mat-icon-button
+      class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+      (click)="layoutService.toggleMobileMenu()"
+      aria-label="Open navigation menu"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
     <span class="font-bold text-gray-900 dark:text-white">FinTrack</span>
   </div>
 
-  <!-- Desktop: sidebar toggle button -->
-  <button
-    mat-icon-button
-    class="hidden md:flex text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-    (click)="layoutService.toggleSidebar()"
-    [matTooltip]="layoutService.isSidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
-    matTooltipPosition="below"
-  >
-    <mat-icon>{{ layoutService.isSidebarCollapsed() ? 'menu' : 'menu_open' }}</mat-icon>
-  </button>
+  <!-- Desktop: sidebar collapse toggle -->
+   <div class="hidden md:flex ">
+      <button
+        mat-icon-button
+        class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+        (click)="layoutService.toggleSidebar()"
+        [matTooltip]="layoutService.isSidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+        matTooltipPosition="below"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+   </div>
 
   <!-- Right-side actions -->
   <div class="flex items-center gap-1">

@@ -6,11 +6,11 @@
 
 <!-- ─── Stat Cards ─────────────────────────────────────────────── -->
 @if (transactionsQuery.isPending()) {
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <app-loading-skeleton [count]="4" height="h-28" />
   </div>
 } @else {
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <app-stat-card
       label="Net Worth"
       [value]="(netWorth() | currency) ?? '—'"
@@ -168,7 +168,8 @@
 
 <!-- ─── Loan Snapshot ─────────────────────────────────────────── -->
 <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 shadow-sm">
-  <div class="flex items-center justify-between mb-4">
+  <!-- flex-wrap so button drops below title on very small screens -->
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
     <div class="flex items-center gap-2">
       <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center">
         <mat-icon class="text-white" style="font-size:16px;width:16px;height:16px;">home</mat-icon>
@@ -178,7 +179,7 @@
         <p class="text-xs text-gray-400 dark:text-gray-500">$300k at 6.5% · 30 years</p>
       </div>
     </div>
-    <button mat-stroked-button color="primary" (click)="goToCalculator()" class="text-xs">
+    <button mat-stroked-button color="primary" (click)="goToCalculator()" class="text-xs shrink-0">
       Try Calculator
       <mat-icon>arrow_forward</mat-icon>
     </button>

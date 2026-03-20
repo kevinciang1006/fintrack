@@ -1,21 +1,30 @@
 <div class="flex h-screen bg-gray-100 dark:bg-gray-950 overflow-hidden">
 
-  <!-- Desktop sidebar (width driven by collapsed state) -->
+  <!-- ── Mobile backdrop (dims content when sidebar overlay is open) ── -->
+  <div
+    class="sidebar-backdrop fixed inset-0 bg-black/40 z-40 transition-opacity duration-200"
+    [class.opacity-0]="!layoutService.isMobileMenuOpen()"
+    [class.pointer-events-none]="!layoutService.isMobileMenuOpen()"
+    (click)="layoutService.closeMobileMenu()"
+  ></div>
+
+  <!-- ── Sidebar (fixed overlay on mobile, static push on desktop) ── -->
   <app-sidebar
-    class="hidden md:flex"
+    class="sidebar-host"
+    [class.is-open]="layoutService.isMobileMenuOpen()"
     [style.width]="layoutService.isSidebarCollapsed() ? '64px' : '256px'"
-    style="transition: width 200ms ease; flex-shrink: 0;"
   />
 
-  <!-- Main content area -->
+  <!-- ── Main content area ── -->
   <div class="flex flex-col flex-1 overflow-hidden min-w-0">
     <app-topbar />
-    <main class="flex-1 overflow-auto p-6">
+    <!-- pb-24 reserves space above the fixed mobile bottom nav bar -->
+    <main class="flex-1 overflow-auto p-4 pb-24 md:p-6 md:pb-6">
       <router-outlet />
     </main>
   </div>
 
-  <!-- Mobile bottom nav -->
+  <!-- ── Mobile bottom nav ── -->
   <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-around py-2 z-50">
     <a routerLink="/dashboard" routerLinkActive="text-blue-600 dark:text-blue-400" class="flex flex-col items-center gap-0.5 text-gray-500 dark:text-gray-400 px-3 py-1 text-xs font-medium">
       <mat-icon class="text-xl leading-none">dashboard</mat-icon>

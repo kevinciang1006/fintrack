@@ -1,12 +1,12 @@
 <div class="space-y-6">
 
-  <!-- Header -->
-  <div class="flex items-center justify-between">
+  <!-- Header — flex-wrap so button drops below on very small screens -->
+  <div class="flex flex-wrap items-center justify-between gap-3">
     <div>
       <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Ledger</h2>
       <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Income & expense tracker</p>
     </div>
-    <button mat-flat-button color="primary" (click)="openAddDialog()">
+    <button mat-flat-button color="primary" (click)="openAddDialog()" class="shrink-0">
       <mat-icon>add</mat-icon>
       Add Transaction
     </button>
