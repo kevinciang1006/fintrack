@@ -37,13 +37,19 @@ export class LedgerComponent {
   readonly allTransactions      = computed<Transaction[]>(() => this.transactionsQuery.data() ?? []);
   readonly filteredTransactions = computed<Transaction[]>(() => {
     const f = this.filters();
-    return this.allTransactions().filter(t => {
-      if (f.category && t.category !== f.category) return false;
-      if (f.type     && t.type     !== f.type)     return false;
-      if (f.dateFrom && t.date < f.dateFrom)        return false;
-      if (f.dateTo   && t.date > f.dateTo)          return false;
-      return true;
-    });
+    return [...this.allTransactions()]
+      .filter(t => {
+        if (f.category && t.category !== f.category) return false;
+        if (f.type     && t.type     !== f.type)     return false;
+        if (f.dateFrom && t.date < f.dateFrom)        return false;
+        if (f.dateTo   && t.date > f.dateTo)          return false;
+        return true;
+      })
+      // Most recent date first; within the same date, newest id first
+      .sort((a, b) => {
+        const d = b.date.localeCompare(a.date);
+        return d !== 0 ? d : Number(b.id) - Number(a.id);
+      });
   });
 
   readonly totalIncome   = computed(() => this.allTransactions().filter(t => t.type === 'income') .reduce((s,t) => s+t.amount, 0));

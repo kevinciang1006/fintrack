@@ -439,14 +439,6 @@
       "category": "Utilities",
       "amount": 49.9,
       "type": "expense"
-    },
-    {
-      "id": "12b2",
-      "date": "2026-03-20",
-      "description": "fgsfd",
-      "category": "Utilities",
-      "amount": 100,
-      "type": "income"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,12 +18,24 @@ import { CoinChartComponent } from './components/coin-chart/coin-chart.component
 export class MarketsComponent {
   private coinGeckoService = inject(CoinGeckoService);
   selectedCoin = signal<Coin | null>(null);
+  private hasAutoSelected  = false;
 
   readonly watchlistQuery = injectQuery(() => ({
     queryKey: ['watchlist'] as const,
     queryFn:  () => lastValueFrom(this.coinGeckoService.getWatchlist()),
     refetchInterval: 60_000,
   }));
+
+  constructor() {
+    // Auto-select first coin once on initial load so the chart is immediately visible
+    effect(() => {
+      const coins = this.watchlistQuery.data();
+      if (coins && coins.length > 0 && !this.hasAutoSelected) {
+        this.selectedCoin.set(coins[0]);
+        this.hasAutoSelected = true;
+      }
+    });
+  }
 
   protected onCoinSelected(coin: Coin): void {
     this.selectedCoin.update(prev => prev?.id === coin.id ? null : coin);

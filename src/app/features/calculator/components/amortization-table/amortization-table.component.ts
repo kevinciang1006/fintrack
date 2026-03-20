@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ViewChild, effect, input } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ViewChild, effect, input } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
@@ -12,17 +12,19 @@ import { AmortizationRow } from '../../../../core/models/calculator.model';
   styleUrl: './amortization-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AmortizationTableComponent {
+export class AmortizationTableComponent implements AfterViewInit {
   @ViewChild(MatPaginator) private paginator!: MatPaginator;
 
   schedule = input.required<AmortizationRow[]>();
-  readonly columns = ['month', 'payment', 'principal', 'interest', 'balance'];
+  readonly columns    = ['month', 'payment', 'principal', 'interest', 'balance'];
   readonly dataSource = new MatTableDataSource<AmortizationRow>([]);
 
   constructor() {
-    effect(() => {
-      this.dataSource.data = this.schedule();
-      if (this.paginator) this.dataSource.paginator = this.paginator;
-    });
+    // Only update data here — paginator is wired in ngAfterViewInit
+    effect(() => { this.dataSource.data = this.schedule(); });
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
 }
